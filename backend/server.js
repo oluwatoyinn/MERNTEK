@@ -7,6 +7,7 @@ import connectDB from "./config/db.js";
 
 const port = process.env.PORT || 5000;
 import userRoutes from "./routes/userRoutes.js";
+import subscriberRoutes from "./routes/subscriberRoutes.js";
 
 connectDB();
 
@@ -18,6 +19,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use("/api/users", userRoutes);
+
+app.use("/api/users", subscriberRoutes);
 
 app.get("/", (req, res) => res.send("Server is ready"));
 

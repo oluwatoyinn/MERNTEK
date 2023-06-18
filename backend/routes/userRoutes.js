@@ -1,4 +1,8 @@
 import express from "express";
+// import {
+//   createSubscriber,
+//   getAllSubscriber,
+// } from "../controllers/subsciberController.js";
 import {
   authUser,
   logoutUser,
@@ -17,5 +21,11 @@ router
   .route("/profile")
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
+
+// router.post("/create-subscriber", createSubscriber);
+// router.get("/subscriber", getAllSubscriber);
+
+// // Get subscriber by ID
+// router.get('/:userId', userController.getUserById);
 
 export default router;
