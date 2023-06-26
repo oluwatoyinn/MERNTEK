@@ -1,22 +1,47 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import Input from "./FormFields/Input";
+import { useLoginMutation } from "../slices/usersApiSlice";
+import { setCredentials } from "../slices/authSlice";
 
 // eslint-disable-next-line react/prop-types
 const Login = ({ isOpen, closeModal }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [user, setUser] = useState({
     email: "",
     password: "",
   });
+
+  const [login] = useLoginMutation();
+
+  const { userInfo } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/");
+    }
+  }, [userInfo, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser((user) => ({ ...user, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("form submitted");
+    try {
+      const response = await login({
+        email,
+        password,
+      }).unwrap();
+      dispatch(setCredentials({ ...response }));
+      navigate("/");
+    } catch (err) {
+      console.log(err?.data?.message || err?.error);
+    }
   };
 
   const { email, password } = user;
@@ -53,7 +78,7 @@ const Login = ({ isOpen, closeModal }) => {
                 >
                   Please enter login details
                 </Dialog.Title>
-                <form action="" onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit}>
                   <div className="mt-2">
                     <Input
                       name="email"
@@ -75,7 +100,7 @@ const Login = ({ isOpen, closeModal }) => {
                     <button
                       type="submit"
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={closeModal}
+                      // onClick={closeModal}
                     >
                       Login
                     </button>
